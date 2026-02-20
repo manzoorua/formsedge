@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FormsEdge-inspired design system with modern gradients and vibrant colors */
+
+@layer base {
+  :root {
+    /* Core brand colors - vibrant and modern */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    /* Brand colors - purple/violet primary with complementary accents */
+    --primary: 262 83% 58%;           /* Vibrant purple */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 270 91% 68%;      /* Lighter purple glow */
+    
+    /* Secondary brand - teal/cyan accent */
+    --secondary: 189 94% 93%;         /* Very light teal background */
+    --secondary-foreground: 189 100% 28%;  /* Dark teal text */
+    --accent: 189 94% 43%;            /* Vibrant teal accent */
+    --accent-foreground: 0 0% 100%;
+
+    /* Neutral colors */
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 16% 47%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    /* UI colors */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 262 83% 58%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Success and warning */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(270 91% 68%));
+    --gradient-secondary: linear-gradient(135deg, hsl(189 94% 43%), hsl(189 100% 28%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(189 94% 43%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    
+    /* Enhanced Canvas Gradients */
+    --gradient-canvas: linear-gradient(135deg, hsl(210 40% 96%) 0%, hsl(214 32% 88%) 50%, hsl(210 40% 94%) 100%);
+    --gradient-canvas-pattern: radial-gradient(circle at 20px 20px, hsl(214 32% 91%) 1px, transparent 1px);
+    --gradient-canvas-header: linear-gradient(135deg, hsl(262 83% 58% / 0.12) 0%, hsl(189 94% 43% / 0.12) 50%, hsl(262 83% 58% / 0.08) 100%);
+    --gradient-canvas-container: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 40% 99%) 100%);
+    
+    /* Enhanced Right Sidebar Gradients */
+    --gradient-sidebar-right: linear-gradient(145deg, hsl(210 40% 98%) 0%, hsl(262 83% 58% / 0.02) 50%, hsl(210 40% 96%) 100%);
+    --gradient-sidebar-pattern: radial-gradient(circle at 16px 16px, hsl(262 83% 58% / 0.05) 1px, transparent 1px);
+    --gradient-settings-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(262 83% 58% / 0.02) 100%);
+    --gradient-settings-header: linear-gradient(90deg, hsl(262 83% 58% / 0.08) 0%, hsl(189 94% 43% / 0.06) 100%);
+    
+    /* Enhanced card gradients for visual appeal */
+    --gradient-card-purple: linear-gradient(135deg, hsl(262 83% 96%) 0%, hsl(270 91% 94%) 100%);
+    --gradient-card-teal: linear-gradient(135deg, hsl(189 94% 95%) 0%, hsl(189 100% 92%) 100%);
+    --gradient-card-blue: linear-gradient(135deg, hsl(217 91% 96%) 0%, hsl(224 76% 94%) 100%);
+    --gradient-card-green: linear-gradient(135deg, hsl(142 76% 95%) 0%, hsl(120 60% 92%) 100%);
+    --gradient-card-orange: linear-gradient(135deg, hsl(38 92% 95%) 0%, hsl(45 93% 92%) 100%);
+    --gradient-canvas: linear-gradient(135deg, hsl(210 40% 99%) 0%, hsl(189 94% 98%) 100%);
+    
+    /* Enhanced shadows with vibrant colors */
+    --shadow-primary: 0 10px 40px -10px hsl(262 83% 58% / 0.4);
+    --shadow-secondary: 0 10px 40px -10px hsl(189 94% 43% / 0.3);
+    --shadow-elegant: 0 20px 60px -10px hsl(222 47% 11% / 0.1);
+    --shadow-card: 0 4px 20px -4px hsl(262 83% 58% / 0.15);
+    --shadow-hover: 0 8px 30px -8px hsl(262 83% 58% / 0.25);
+    
+    /* Enhanced Canvas Shadows */
+    --shadow-canvas-deep: 0 25px 80px -15px hsl(222 47% 11% / 0.12), 0 8px 32px -8px hsl(262 83% 58% / 0.1);
+    --shadow-canvas-header: 0 4px 24px -4px hsl(262 83% 58% / 0.15), 0 2px 8px -2px hsl(189 94% 43% / 0.1);
+    --shadow-canvas-container: inset 0 1px 0 0 hsl(0 0% 100%), 0 16px 64px -12px hsl(222 47% 11% / 0.08);
+    
+    /* Enhanced Right Sidebar Shadows */
+    --shadow-sidebar-deep: 0 20px 60px -12px hsl(262 83% 58% / 0.08), 0 8px 24px -6px hsl(222 47% 11% / 0.06);
+    --shadow-sidebar-border: inset 1px 0 0 0 hsl(262 83% 58% / 0.15), inset 0 1px 0 0 hsl(0 0% 100% / 0.8);
+    --shadow-settings-card: 0 8px 32px -8px hsl(262 83% 58% / 0.12), 0 2px 8px -2px hsl(222 47% 11% / 0.05);
+    --shadow-settings-elevated: 0 12px 40px -10px hsl(262 83% 58% / 0.15), 0 4px 16px -4px hsl(189 94% 43% / 0.08);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+ 
+     --sidebar-ring: 217.2 91.2% 59.8%;
+   }
+ 
+ 
+   .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    /* Dark mode gradients */
+    --gradient-subtle: linear-gradient(180deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 17.5%) 100%);
+    
+    /* Dark mode canvas gradients */
+    --gradient-canvas: linear-gradient(135deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 15%) 50%, hsl(222.2 84% 6%) 100%);
+    --gradient-canvas-pattern: radial-gradient(circle at 20px 20px, hsl(217.2 32.6% 17.5%) 1px, transparent 1px);
+    --gradient-canvas-header: linear-gradient(135deg, hsl(262 83% 58% / 0.08) 0%, hsl(189 94% 43% / 0.06) 50%, hsl(262 83% 58% / 0.04) 100%);
+    --gradient-canvas-container: linear-gradient(145deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 12%) 100%);
+    --gradient-canvas-empty: linear-gradient(145deg, hsl(222.2 84% 4.9% / 0.95) 0%, hsl(262 83% 58% / 0.03) 100%);
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

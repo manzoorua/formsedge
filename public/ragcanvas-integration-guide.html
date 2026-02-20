@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAGcanvas Widget Integration Guide</title>
+  <style>
+    /* Print-optimized styles */
+    @media print {
+      @page {
+        size: A4;
+        margin: 2cm;
+      }
+      
+      body {
+        font-size: 11pt;
+        line-height: 1.5;
+      }
+      
+      h1 {
+        page-break-before: always;
+        font-size: 24pt;
+        margin-top: 0;
+      }
+      
+      h1:first-of-type {
+        page-break-before: avoid;
+      }
+      
+      h2 {
+        page-break-after: avoid;
+        font-size: 18pt;
+        margin-top: 20pt;
+      }
+      
+      h3 {
+        page-break-after: avoid;
+        font-size: 14pt;
+        margin-top: 15pt;
+      }
+      
+      pre {
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        padding: 10pt;
+        font-size: 9pt;
+        overflow-x: auto;
+      }
+      
+      table {
+        page-break-inside: avoid;
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 10pt;
+      }
+      
+      .no-print {
+        display: none;
+      }
+      
+      a {
+        color: #000;
+        text-decoration: none;
+      }
+      
+      a::after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666;
+      }
+    }
+    
+    /* Screen styles */
+    @media screen {
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #333;
+        background: #f5f5f5;
+        line-height: 1.6;
+      }
+      
+      .container {
+        background: white;
+        padding: 40px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .print-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+      }
+      
+      .print-button:hover {
+        background: #45a049;
+      }
+    }
+    
+    /* Common styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    
+    h1 {
+      color: #1a1a1a;
+      border-bottom: 3px solid #4CAF50;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
+    
+    h2 {
+      color: #2c3e50;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+    
+    h3 {
+      color: #34495e;
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+    
+    pre {
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-left: 4px solid #4CAF50;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+    }
+    
+    pre code {
+      background: none;
+      padding: 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    
+    th {
+      background: #4CAF50;
+      color: white;
+      font-weight: 600;
+    }
+    
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    
+    .warning-box {
+      background: #fff3e0;
+      border-left: 4px solid #ff9800;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    
+    .success-box {
+      background: #e8f5e9;
+      border-left: 4px solid #4CAF50;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    
+    .toc {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin: 30px 0;
+    }
+    
+    .toc h2 {
+      margin-top: 0;
+      border: none;
+    }
+    
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .toc li {
+      margin: 8px 0;
+    }
+    
+    .toc a {
+      color: #2196F3;
+      text-decoration: none;
+    }
+    
+    .toc a:hover {
+      text-decoration: underline;
+    }
+    
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    
+    li {
+      margin: 8px 0;
+    }
+    
+    .metadata {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button no-print" onclick="window.print()">📄 Print to PDF</button>
+  
+  <div class="container">
+    <h1>RAGcanvas Widget Integration Guide</h1>
+    
+    <div class="metadata">
+      <strong>Document Version:</strong> 1.0<br>
+      <strong>Last Updated:</strong> <script>document.write(new Date().toLocaleDateString())</script><br>
+      <strong>Widget Base URL:</strong> https://ragcanvas.com<br>
+      <strong>Production Widget ID:</strong> widget_7243353be9689ba901ea6816
+    </div>
+
+    <div class="toc">
+      <h2>Table of Contents</h2>
+      <ul>
+        <li><a href="#overview">1. Overview</a></li>
+        <li><a href="#architecture">2. System Architecture</a></li>
+        <li><a href="#widget-modes">3. Widget Modes</a></li>
+        <li><a href="#configuration">4. Configuration Schema</a></li>
+        <li><a href="#implementation">5. Implementation Guide</a></li>
+        <li><a href="#postmessage">6. PostMessage Communication Protocol</a></li>
+        <li><a href="#proxy-button">7. App Mode: Proxy Button Pattern</a></li>
+        <li><a href="#state-management">8. State Management</a></li>
+        <li><a href="#realtime">9. Real-Time Configuration Updates</a></li>
+        <li><a href="#integration-checklist">10. Integration Checklist</a></li>
+        <li><a href="#security">11. Security Considerations</a></li>
+        <li><a href="#troubleshooting">12. Troubleshooting</a></li>
+        <li><a href="#performance">13. Performance Optimization</a></li>
+        <li><a href="#browser-compatibility">14. Browser Compatibility</a></li>
+      </ul>
+    </div>
+
+    <h1 id="overview">1. Overview</h1>
+    
+    <p>This document provides comprehensive technical guidance for integrating the RAGcanvas chatbot widget into external websites. The widget supports two distinct embedding modes, each optimized for different user experience patterns.</p>
+    
+    <div class="success-box">
+      <strong>Key Benefits:</strong>
+      <ul>
+        <li>Zero backend infrastructure required on host website</li>
+        <li>Automatic scaling and performance optimization</li>
+        <li>Real-time configuration updates without code changes</li>
+        <li>Cross-origin secure communication via PostMessage API</li>
+        <li>Mobile-responsive design for all device types</li>
+      </ul>
+    </div>
+
+    <h1 id="architecture">2. System Architecture</h1>
+    
+    <h3>2.1 Component Overview</h3>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Technology</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Widget Source</td>
+          <td>RAGcanvas (React)</td>
+          <td>Hosts the chatbot interface and AI logic</td>
+        </tr>
+        <tr>
+          <td>Communication Layer</td>
+          <td>PostMessage API</td>
+          <td>Secure cross-origin messaging between host and widget</td>
+        </tr>
+        <tr>
+          <td>State Management</td>
+          <td>React State + Supabase Realtime</td>
+          <td>Manages widget state and configuration synchronization</td>
+        </tr>
+        <tr>
+          <td>Configuration Storage</td>
+          <td>Supabase PostgreSQL</td>
+          <td>Stores chatbot settings with real-time updates</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>2.2 Data Flow</h3>
+    
+    <pre><code>[Host Website] ←PostMessage→ [Widget Iframe] ←HTTP→ [RAGcanvas Backend]
+                                      ↓
+                              [Supabase Database]
+                                      ↓
+                            [Real-time Subscriptions]</code></pre>
+
+    <h1 id="widget-modes">3. Widget Modes</h1>
+    
+    <h2>3.1 App Mode (Recommended)</h2>
+    
+    <div class="info-box">
+      <strong>Use Case:</strong> Modern, non-intrusive chatbot experience with minimal visual footprint when closed.
+    </div>
+    
+    <h3>Characteristics:</h3>
+    <ul>
+      <li><strong>Layout:</strong> Full viewport overlay using fixed positioning</li>
+      <li><strong>Z-Index:</strong> 999999 (iframe) and 999998 (proxy button)</li>
+      <li><strong>Initial State:</strong> Typically "closed" with only proxy button visible</li>
+      <li><strong>Interaction Model:</strong> Click proxy button → Widget expands → Full chat interface</li>
+      <li><strong>Pointer Events:</strong> Dynamically controlled (disabled when closed, enabled when open)</li>
+    </ul>
+    
+    <h3>URL Format:</h3>
+    <pre><code>https://ragcanvas.com/widget-app?id={widgetId}&state={initialState}</code></pre>
+    
+    <h3>Visual Behavior:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Visual Appearance</th>
+          <th>Interaction</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Closed</td>
+          <td>Subtle proxy button (56x56px, bottom-right)</td>
+          <td>Click to open widget</td>
+        </tr>
+        <tr>
+          <td>Open</td>
+          <td>Full chat interface overlay</td>
+          <td>Interactive chat, minimize/close buttons</td>
+        </tr>
+        <tr>
+          <td>Minimized</td>
+          <td>Returns to proxy button state</td>
+          <td>Click to reopen</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3.2 Iframe Mode</h2>
+    
+    <div class="info-box">
+      <strong>Use Case:</strong> Fixed widget always visible in corner, traditional chat widget pattern.
+    </div>
+    
+    <h3>Characteristics:</h3>
+    <ul>
+      <li><strong>Dimensions:</strong> Fixed 400px × 600px</li>
+      <li><strong>Position:</strong> Fixed bottom-right (20px margins)</li>
+      <li><strong>Z-Index:</strong> 9999</li>
+      <li><strong>Styling:</strong> 12px border radius, subtle box shadow</li>
+      <li><strong>Interaction Model:</strong> Always visible, traditional chat window</li>
+    </ul>
+    
+    <h3>URL Format:</h3>
+    <pre><code>https://ragcanvas.com/widget-iframe/{widgetId}?state={initialState}</code></pre>
+
+    <h1 id="configuration">4. Configuration Schema</h1>
+    
+    <h2>4.1 Database Structure</h2>
+    
+    <p>Configuration is stored in Supabase table: <code>chatbot_settings</code></p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+          <td>UUID</td>
+          <td>Primary key</td>
+        </tr>
+        <tr>
+          <td>setting_key</td>
+          <td>TEXT</td>
+          <td>Configuration identifier</td>
+        </tr>
+        <tr>
+          <td>setting_value</td>
+          <td>JSONB</td>
+          <td>Configuration data</td>
+        </tr>
+        <tr>
+          <td>created_at</td>
+          <td>TIMESTAMP</td>
+          <td>Record creation time</td>
+        </tr>
+        <tr>
+          <td>updated_at</td>
+          <td>TIMESTAMP</td>
+          <td>Last modification time</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4.2 Configuration Keys</h2>
+    
+    <h3>chatbot_enabled</h3>
+    <pre><code>{
+  "setting_key": "chatbot_enabled",
+  "setting_value": {
+    "enabled": true
+  }
+}</code></pre>
+    
+    <h3>chatbot_config</h3>
+    <pre><code>{
+  "setting_key": "chatbot_config",
+  "setting_value": {
+    "widgetId": "widget_7243353be9689ba901ea6816",
+    "initialState": "closed",
+    "mode": "app"
+  }
+}</code></pre>
+
+    <h2>4.3 Configuration Parameters</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Type</th>
+          <th>Values</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>widgetId</td>
+          <td>string</td>
+          <td>widget_*</td>
+          <td>Unique identifier for the RAGcanvas widget</td>
+        </tr>
+        <tr>
+          <td>initialState</td>
+          <td>string</td>
+          <td>'open' | 'closed' | 'minimized'</td>
+          <td>Widget state on page load</td>
+        </tr>
+        <tr>
+          <td>mode</td>
+          <td>string</td>
+          <td>'app' | 'iframe'</td>
+          <td>Embedding mode (defaults to 'app')</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 id="implementation">5. Implementation Guide</h1>
+    
+    <h2>5.1 Complete React Component</h2>
+    
+    <pre><code>import React, { useEffect, useRef, useState } from 'react';
+import { MessageCircle } from 'lucide-react';
+
+const RAGCANVAS_WIDGET_BASE_URL = 'https://ragcanvas.com';
+
+interface ChatbotIframeEmbedProps {
+  widgetId: string;
+  initialState?: 'closed' | 'minimized' | 'open';
+  mode?: 'app' | 'iframe';
+}
+
+export const ChatbotIframeEmbed: React.FC&lt;ChatbotIframeEmbedProps&gt; = ({ 
+  widgetId, 
+  initialState = 'closed',
+  mode = 'app'
+}) => {
+  const iframeRef = useRef&lt;HTMLIFrameElement&gt;(null);
+  const [isOpen, setIsOpen] = useState(initialState === 'open');
+  const [isInteractive, setIsInteractive] = useState(initialState === 'open');
+
+  const iframeUrl = mode === 'app'
+    ? `${RAGCANVAS_WIDGET_BASE_URL}/widget-app?id=${widgetId}&state=${initialState}`
+    : `${RAGCANVAS_WIDGET_BASE_URL}/widget-iframe/${widgetId}?state=${initialState}`;
+
+  const isAppMode = mode === 'app';
+
+  // Listen for postMessage events from the widget
+  useEffect(() => {
+    const allowedOrigin = new URL(RAGCANVAS_WIDGET_BASE_URL).origin;
+    
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== allowedOrigin) return;
+      
+      const data = event.data;
+      
+      // Enhanced format: { type: 'ragcanvas:state', state: 'open' | 'minimized' | 'closed' }
+      if (data?.type === 'ragcanvas:state') {
+        if (data.state === 'open') {
+          setIsOpen(true);
+          setIsInteractive(true);
+        } else if (data.state === 'minimized' || data.state === 'closed') {
+          setIsOpen(false);
+          setIsInteractive(false);
+        }
+      }
+      // Fallback: Legacy direct state format
+      else if (data?.state === 'open') {
+        setIsOpen(true);
+        setIsInteractive(true);
+      } else if (data?.state === 'minimized' || data?.state === 'closed') {
+        setIsOpen(false);
+        setIsInteractive(false);
+      }
+      // Fallback: Boolean flags format
+      else if (data?.open === true) {
+        setIsOpen(true);
+        setIsInteractive(true);
+      } else if (data?.minimized === true || data?.closed === true) {
+        setIsOpen(false);
+        setIsInteractive(false);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  const handleProxyClick = () => {
+    const allowedOrigin = new URL(RAGCANVAS_WIDGET_BASE_URL).origin;
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: 'ragcanvas:command', command: 'toggle' },
+      allowedOrigin
+    );
+    // Fallback: enable interactions after short delay
+    setTimeout(() => {
+      setIsInteractive(true);
+    }, 300);
+  };
+
+  return (
+    &lt;&gt;
+      &lt;iframe
+        ref={iframeRef}
+        src={iframeUrl}
+        style={isAppMode ? {
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 999999,
+          border: 'none',
+          background: 'transparent',
+          pointerEvents: isInteractive ? 'auto' : 'none'
+        } : {
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '400px',
+          height: '600px',
+          border: 'none',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          zIndex: 9999,
+          background: 'transparent'
+        }}
+        title="RAGcanvas Chat Widget"
+        allow={isAppMode ? 'microphone; camera; autoplay; encrypted-media' : 'clipboard-write; microphone'}
+      /&gt;
+      
+      {/* Proxy button for app mode when widget is minimized/closed */}
+      {isAppMode && !isInteractive && (
+        &lt;button
+          onClick={handleProxyClick}
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            width: '56px',
+            height: '56px',
+            borderRadius: '50%',
+            background: '#ffffff',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+            cursor: 'pointer',
+            zIndex: 999998,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'transform 0.2s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          title="Open Chat"
+        &gt;
+          &lt;MessageCircle style={{ width: '24px', height: '24px', color: 'rgba(0, 0, 0, 0.3)' }} /&gt;
+        &lt;/button&gt;
+      )}
+    &lt;/&gt;
+  );
+};</code></pre>
+
+    <h2>5.2 Vanilla JavaScript Implementation</h2>
+    
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;RAGcanvas Widget Integration&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- Widget Container --&gt;
+  &lt;div id="ragcanvas-widget"&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    (function() {
+      const WIDGET_CONFIG = {
+        widgetId: 'widget_7243353be9689ba901ea6816',
+        initialState: 'closed',
+        mode: 'app',
+        baseUrl: 'https://ragcanvas.com'
+      };
+
+      let isInteractive = WIDGET_CONFIG.initialState === 'open';
+      let isOpen = WIDGET_CONFIG.initialState === 'open';
+
+      // Create iframe
+      const iframe = document.createElement('iframe');
+      const iframeUrl = WIDGET_CONFIG.mode === 'app'
+        ? `${WIDGET_CONFIG.baseUrl}/widget-app?id=${WIDGET_CONFIG.widgetId}&state=${WIDGET_CONFIG.initialState}`
+        : `${WIDGET_CONFIG.baseUrl}/widget-iframe/${WIDGET_CONFIG.widgetId}?state=${WIDGET_CONFIG.initialState}`;
+      
+      iframe.src = iframeUrl;
+      iframe.title = 'RAGcanvas Chat Widget';
+      
+      if (WIDGET_CONFIG.mode === 'app') {
+        Object.assign(iframe.style, {
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          zIndex: '999999',
+          border: 'none',
+          background: 'transparent',
+          pointerEvents: isInteractive ? 'auto' : 'none'
+        });
+        iframe.allow = 'microphone; camera; autoplay; encrypted-media';
+      } else {
+        Object.assign(iframe.style, {
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '400px',
+          height: '600px',
+          border: 'none',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          zIndex: '9999',
+          background: 'transparent'
+        });
+        iframe.allow = 'clipboard-write; microphone';
+      }
+
+      // Create proxy button for app mode
+      let proxyButton = null;
+      if (WIDGET_CONFIG.mode === 'app') {
+        proxyButton = document.createElement('button');
+        proxyButton.innerHTML = `
+          &lt;svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"&gt;
+            &lt;path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"&gt;&lt;/path&gt;
+          &lt;/svg&gt;
+        `;
+        Object.assign(proxyButton.style, {
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '50%',
+          background: '#ffffff',
+          border: '1px solid rgba(0, 0, 0, 0.08)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+          cursor: 'pointer',
+          zIndex: '999998',
+          display: isInteractive ? 'none' : 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'transform 0.2s',
+          color: 'rgba(0, 0, 0, 0.3)'
+        });
+        
+        proxyButton.addEventListener('click', () => {
+          const allowedOrigin = new URL(WIDGET_CONFIG.baseUrl).origin;
+          iframe.contentWindow.postMessage(
+            { type: 'ragcanvas:command', command: 'toggle' },
+            allowedOrigin
+          );
+          setTimeout(() => {
+            isInteractive = true;
+            iframe.style.pointerEvents = 'auto';
+            proxyButton.style.display = 'none';
+          }, 300);
+        });
+
+        proxyButton.addEventListener('mouseenter', () => {
+          proxyButton.style.transform = 'scale(1.05)';
+        });
+
+        proxyButton.addEventListener('mouseleave', () => {
+          proxyButton.style.transform = 'scale(1)';
+        });
+      }
+
+      // Listen for messages from widget
+      window.addEventListener('message', (event) => {
+        const allowedOrigin = new URL(WIDGET_CONFIG.baseUrl).origin;
+        if (event.origin !== allowedOrigin) return;
+        
+        const data = event.data;
+        
+        if (data?.type === 'ragcanvas:state') {
+          if (data.state === 'open') {
+            isOpen = true;
+            isInteractive = true;
+            iframe.style.pointerEvents = 'auto';
+            if (proxyButton) proxyButton.style.display = 'none';
+          } else if (data.state === 'minimized' || data.state === 'closed') {
+            isOpen = false;
+            isInteractive = false;
+            iframe.style.pointerEvents = 'none';
+            if (proxyButton) proxyButton.style.display = 'flex';
+          }
+        }
+      });
+
+      // Append elements to DOM
+      const container = document.getElementById('ragcanvas-widget');
+      container.appendChild(iframe);
+      if (proxyButton) {
+        container.appendChild(proxyButton);
+      }
+    })();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+    <h1 id="postmessage">6. PostMessage Communication Protocol</h1>
+    
+    <h2>6.1 Message Format Specification</h2>
+    
+    <h3>Outbound Messages (Widget → Host)</h3>
+    
+    <div class="info-box">
+      <strong>Enhanced Format (Primary):</strong>
+      <pre><code>{
+  type: 'ragcanvas:state',
+  state: 'open' | 'minimized' | 'closed'
+}</code></pre>
+    </div>
+    
+    <div class="info-box">
+      <strong>Legacy Format (Fallback):</strong>
+      <pre><code>// Direct state
+{ state: 'open' | 'minimized' | 'closed' }
+
+// Boolean flags
+{ open: true } | { minimized: true } | { closed: true }</code></pre>
+    </div>
+
+    <h3>Inbound Messages (Host → Widget)</h3>
+    
+    <pre><code>{
+  type: 'ragcanvas:command',
+  command: 'toggle' | 'open' | 'close' | 'minimize'
+}</code></pre>
+
+    <h2>6.2 Message Handler Implementation</h2>
+    
+    <pre><code>const RAGCANVAS_ORIGIN = 'https://ragcanvas.com';
+
+window.addEventListener('message', (event) => {
+  // Security: Validate origin
+  if (event.origin !== RAGCANVAS_ORIGIN) return;
+  
+  const data = event.data;
+  
+  // Enhanced format (primary)
+  if (data?.type === 'ragcanvas:state') {
+    handleStateChange(data.state);
+  }
+  // Legacy format (fallback)
+  else if (data?.state) {
+    handleStateChange(data.state);
+  }
+  // Boolean format (fallback)
+  else if (data?.open) {
+    handleStateChange('open');
+  } else if (data?.minimized) {
+    handleStateChange('minimized');
+  } else if (data?.closed) {
+    handleStateChange('closed');
+  }
+});
+
+function handleStateChange(state) {
+  switch(state) {
+    case 'open':
+      // Widget is now open and interactive
+      console.log('Widget opened');
+      break;
+    case 'minimized':
+    case 'closed':
+      // Widget is now minimized/closed
+      console.log('Widget closed');
+      break;
+  }
+}</code></pre>
+
+    <h2>6.3 Sending Commands to Widget</h2>
+    
+    <pre><code>function sendCommandToWidget(command) {
+  const iframe = document.querySelector('iframe[title="RAGcanvas Chat Widget"]');
+  if (!iframe || !iframe.contentWindow) return;
+  
+  iframe.contentWindow.postMessage(
+    { 
+      type: 'ragcanvas:command', 
+      command: command 
+    },
+    'https://ragcanvas.com'
+  );
+}
+
+// Usage
+sendCommandToWidget('toggle');  // Toggle widget state
+sendCommandToWidget('open');    // Open widget
+sendCommandToWidget('close');   // Close widget
+sendCommandToWidget('minimize'); // Minimize widget</code></pre>
+
+    <h1 id="proxy-button">7. App Mode: Proxy Button Pattern</h1>
+    
+    <h2>7.1 Purpose and Rationale</h2>
+    
+    <div class="info-box">
+      <p>The proxy button is a critical UX component for App Mode that solves the pointer-events paradox:</p>
+      <ul>
+        <li>Widget iframe must have <code>pointer-events: none</code> when closed to allow page interaction</li>
+        <li>Without proxy button, users would have no way to open the widget</li>
+        <li>Proxy button provides a clickable target that sends toggle command to iframe</li>
+        <li>After sending command, button hides and iframe becomes interactive</li>
+      </ul>
+    </div>
+
+    <h2>7.2 Technical Specifications</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dimensions</td>
+          <td>56px × 56px</td>
+          <td>Standard mobile-friendly touch target size</td>
+        </tr>
+        <tr>
+          <td>Shape</td>
+          <td>border-radius: 50%</td>
+          <td>Circular button, modern chat widget convention</td>
+        </tr>
+        <tr>
+          <td>Position</td>
+          <td>fixed bottom: 20px, right: 20px</td>
+          <td>Standard bottom-right placement, non-intrusive</td>
+        </tr>
+        <tr>
+          <td>Z-Index</td>
+          <td>999998</td>
+          <td>One layer below iframe (999999) but above page content</td>
+        </tr>
+        <tr>
+          <td>Background</td>
+          <td>#ffffff with 8% black border</td>
+          <td>Subtle, non-distracting appearance</td>
+        </tr>
+        <tr>
+          <td>Shadow</td>
+          <td>0 2px 8px rgba(0,0,0,0.04)</td>
+          <td>Minimal depth cue, nearly invisible</td>
+        </tr>
+        <tr>
+          <td>Icon Color</td>
+          <td>rgba(0, 0, 0, 0.3)</td>
+          <td>Low opacity for subtle presence</td>
+        </tr>
+        <tr>
+          <td>Hover Scale</td>
+          <td>transform: scale(1.05)</td>
+          <td>Gentle interaction feedback</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>7.3 Interaction Flow</h2>
+    
+    <pre><code>1. Initial State (Widget Closed):
+   - Iframe: pointer-events: none
+   - Proxy Button: Visible
+   
+2. User Clicks Proxy Button:
+   - Button sends PostMessage: { type: 'ragcanvas:command', command: 'toggle' }
+   - Fallback timeout sets isInteractive = true after 300ms
+   
+3. Widget Receives Command:
+   - Widget opens and sends state message: { type: 'ragcanvas:state', state: 'open' }
+   
+4. Host Receives State Update:
+   - Sets isInteractive = true
+   - Iframe: pointer-events: auto
+   - Proxy Button: Hidden
+   
+5. User Closes/Minimizes Widget:
+   - Widget sends: { type: 'ragcanvas:state', state: 'closed' }
+   - Host sets isInteractive = false
+   - Iframe: pointer-events: none
+   - Proxy Button: Visible again</code></pre>
+
+    <h2>7.4 Design Philosophy</h2>
+    
+    <div class="success-box">
+      <p>The proxy button is intentionally designed to be <strong>nearly invisible</strong>:</p>
+      <ul>
+        <li>Blends with page background using white color</li>
+        <li>Minimal shadow (4% opacity) creates subtle depth</li>
+        <li>Icon at 30% opacity - barely noticeable until hover</li>
+        <li>No bright colors or attention-grabbing animations</li>
+        <li>Appears as a "light shadow" rather than an active button</li>
+      </ul>
+      <p><strong>Goal:</strong> Provide functionality without visual distraction from host website's content.</p>
+    </div>
+
+    <h1 id="state-management">8. State Management</h1>
+    
+    <h2>8.1 Widget States</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Description</th>
+          <th>Pointer Events</th>
+          <th>Proxy Button</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>closed</td>
+          <td>Widget is not visible, only proxy button shown (app mode)</td>
+          <td>none</td>
+          <td>Visible</td>
+        </tr>
+        <tr>
+          <td>minimized</td>
+          <td>Widget collapsed to minimal state, functionally same as closed</td>
+          <td>none</td>
+          <td>Visible</td>
+        </tr>
+        <tr>
+          <td>open</td>
+          <td>Widget fully expanded and interactive</td>
+          <td>auto</td>
+          <td>Hidden</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>8.2 State Transition Diagram</h2>
+    
+    <pre><code>           [closed/minimized]
+                   |
+        User clicks proxy button
+                   |
+                   v
+            Send 'toggle' command
+                   |
+                   v
+              Widget opens
+                   |
+                   v
+         Receives 'open' state
+                   |
+                   v
+    isInteractive = true, pointer-events = auto
+                   |
+                   v
+               [open]
+                   |
+   User clicks close/minimize in widget
+                   |
+                   v
+    Receives 'closed'/'minimized' state
+                   |
+                   v
+    isInteractive = false, pointer-events = none
+                   |
+                   v
+           [closed/minimized]</code></pre>
+
+    <h2>8.3 React State Variables</h2>
+    
+    <pre><code>const [isOpen, setIsOpen] = useState(initialState === 'open');
+const [isInteractive, setIsInteractive] = useState(initialState === 'open');
+
+// isOpen: Tracks whether widget is visually open
+// isInteractive: Controls pointer-events and proxy button visibility
+// Both typically synchronized but separated for flexibility</code></pre>
+
+    <h1 id="realtime">9. Real-Time Configuration Updates</h1>
+    
+    <h2>9.1 Supabase Real-Time Subscription</h2>
+    
+    <pre><code>import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+function useChatbotSettings() {
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    // Initial fetch
+    fetchSettings();
+
+    // Subscribe to real-time updates
+    const subscription = supabase
+      .channel('chatbot_settings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'chatbot_settings'
+        },
+        (payload) => {
+          console.log('Configuration updated:', payload);
+          fetchSettings(); // Refetch on any change
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  async function fetchSettings() {
+    const { data, error } = await supabase
+      .from('chatbot_settings')
+      .select('*')
+      .in('setting_key', ['chatbot_enabled', 'chatbot_config']);
+    
+    if (data) {
+      const enabled = data.find(s => s.setting_key === 'chatbot_enabled')?.setting_value?.enabled;
+      const configData = data.find(s => s.setting_key === 'chatbot_config')?.setting_value;
+      setConfig({ enabled, ...configData });
+    }
+  }
+
+  return { config };
+}</code></pre>
+
+    <h2>9.2 Configuration Update Flow</h2>
+    
+    <pre><code>1. Admin updates settings in database
+2. Supabase triggers real-time notification
+3. All connected clients receive notification via WebSocket
+4. Clients refetch configuration
+5. React re-renders with new configuration
+6. Widget automatically updates without page refresh</code></pre>
+
+    <div class="warning-box">
+      <strong>Important:</strong> Real-time updates only affect configuration (widgetId, mode, initialState). Active widget instances do not reload; changes apply on next page load or component remount.
+    </div>
+
+    <h1 id="integration-checklist">10. Integration Checklist</h1>
+    
+    <h2>10.1 Prerequisites</h2>
+    
+    <div class="success-box">
+      <input type="checkbox"> RAGcanvas widget ID obtained<br>
+      <input type="checkbox"> Widget mode selected (app or iframe)<br>
+      <input type="checkbox"> Initial state decided (open, closed, minimized)<br>
+      <input type="checkbox"> Supabase configuration (if using database storage)<br>
+      <input type="checkbox"> Cross-origin policies reviewed
+    </div>
+
+    <h2>10.2 Implementation Steps</h2>
+    
+    <ol>
+      <li><strong>Add Widget Component</strong>
+        <ul>
+          <li>Copy ChatbotIframeEmbed component to your project</li>
+          <li>Install dependencies: <code>lucide-react</code> (for icon)</li>
+        </ul>
+      </li>
+      <li><strong>Configure Widget</strong>
+        <ul>
+          <li>Set widgetId from RAGcanvas dashboard</li>
+          <li>Choose mode: 'app' (recommended) or 'iframe'</li>
+          <li>Set initialState: typically 'closed' for app mode</li>
+        </ul>
+      </li>
+      <li><strong>Add to Layout</strong>
+        <ul>
+          <li>Place component at root level (App.tsx or layout component)</li>
+          <li>Ensure component renders on all pages where widget should appear</li>
+        </ul>
+      </li>
+      <li><strong>Test PostMessage Communication</strong>
+        <ul>
+          <li>Open browser console</li>
+          <li>Click proxy button (app mode) or widget (iframe mode)</li>
+          <li>Verify PostMessage events in console logs</li>
+          <li>Test state transitions (open → close → open)</li>
+        </ul>
+      </li>
+      <li><strong>Verify Cross-Origin Security</strong>
+        <ul>
+          <li>Confirm origin validation in message handler</li>
+          <li>Test that messages from other origins are rejected</li>
+        </ul>
+      </li>
+      <li><strong>Mobile Testing</strong>
+        <ul>
+          <li>Test on mobile devices (iOS Safari, Android Chrome)</li>
+          <li>Verify touch targets are appropriately sized</li>
+          <li>Check viewport scaling and positioning</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h2>10.3 Testing Scenarios</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Scenario</th>
+          <th>Expected Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Page load (closed state)</td>
+          <td>Proxy button visible, widget non-interactive</td>
+        </tr>
+        <tr>
+          <td>Click proxy button</td>
+          <td>Widget opens, button hides, iframe becomes interactive</td>
+        </tr>
+        <tr>
+          <td>Close widget from within</td>
+          <td>Widget closes, proxy button reappears</td>
+        </tr>
+        <tr>
+          <td>Page interaction with widget closed</td>
+          <td>Clicks pass through iframe to underlying page</td>
+        </tr>
+        <tr>
+          <td>Page interaction with widget open</td>
+          <td>Widget captures clicks, page behind is non-interactive</td>
+        </tr>
+        <tr>
+          <td>Mobile device touch</td>
+          <td>Proxy button large enough for comfortable tapping</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 id="security">11. Security Considerations</h1>
+    
+    <h2>11.1 Origin Validation</h2>
+    
+    <div class="warning-box">
+      <strong>Critical:</strong> Always validate <code>event.origin</code> in PostMessage handlers to prevent XSS attacks.
+    </div>
+    
+    <pre><code>const ALLOWED_ORIGIN = 'https://ragcanvas.com';
+
+window.addEventListener('message', (event) => {
+  // REQUIRED: Validate origin
+  if (event.origin !== ALLOWED_ORIGIN) {
+    console.warn('Rejected message from unauthorized origin:', event.origin);
+    return;
+  }
+  
+  // Safe to process message
+  handleMessage(event.data);
+});</code></pre>
+
+    <h2>11.2 Content Security Policy (CSP)</h2>
+    
+    <p>If your website uses CSP headers, add the following directives:</p>
+    
+    <pre><code>Content-Security-Policy:
+  frame-src https://ragcanvas.com;
+  connect-src https://ragcanvas.com;
+  script-src 'self' https://ragcanvas.com;</code></pre>
+
+    <h2>11.3 Iframe Sandbox Attribute</h2>
+    
+    <div class="info-box">
+      <p>The widget does not use the <code>sandbox</code> attribute to maintain full functionality. If sandbox is required for your use case, use:</p>
+      <pre><code>sandbox="allow-scripts allow-same-origin allow-forms allow-popups"</code></pre>
+      <p><strong>Note:</strong> This may restrict some widget features.</p>
+    </div>
+
+    <h2>11.4 HTTPS Requirement</h2>
+    
+    <div class="warning-box">
+      <strong>Required:</strong> Both host website and widget must use HTTPS. Mixed content (HTTP embedding HTTPS iframe) will be blocked by browsers.
+    </div>
+
+    <h1 id="troubleshooting">12. Troubleshooting</h1>
+    
+    <h2>12.1 Common Issues and Solutions</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Cause</th>
+          <th>Solution</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Proxy button not clickable</td>
+          <td>Z-index conflict with page elements</td>
+          <td>Ensure no page elements have z-index > 999998</td>
+        </tr>
+        <tr>
+          <td>Widget not responding to clicks when open</td>
+          <td>pointer-events not updated to 'auto'</td>
+          <td>Check PostMessage handler is receiving 'open' state</td>
+        </tr>
+        <tr>
+          <td>PostMessage not received</td>
+          <td>Origin validation failing</td>
+          <td>Verify RAGCANVAS_WIDGET_BASE_URL matches exactly</td>
+        </tr>
+        <tr>
+          <td>Widget iframe blank</td>
+          <td>CSP blocking frame-src</td>
+          <td>Add https://ragcanvas.com to frame-src directive</td>
+        </tr>
+        <tr>
+          <td>Mobile touch targets too small</td>
+          <td>Viewport scaling issues</td>
+          <td>Add viewport meta tag: &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</td>
+        </tr>
+        <tr>
+          <td>Widget not loading</td>
+          <td>Invalid widgetId</td>
+          <td>Verify widgetId from RAGcanvas dashboard</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>12.2 Debug Console Logging</h2>
+    
+    <pre><code>// Enable debug logging
+const DEBUG = true;
+
+useEffect(() => {
+  const handleMessage = (event: MessageEvent) => {
+    if (DEBUG) {
+      console.log('[Chatbot Debug]', {
+        origin: event.origin,
+        data: event.data,
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    // ... rest of handler
+  };
+  
+  window.addEventListener('message', handleMessage);
+  return () => window.removeEventListener('message', handleMessage);
+}, []);</code></pre>
+
+    <h2>12.3 Network Debugging</h2>
+    
+    <ol>
+      <li>Open browser DevTools (F12)</li>
+      <li>Go to Network tab</li>
+      <li>Filter by "ragcanvas.com"</li>
+      <li>Check for:
+        <ul>
+          <li>HTTP 200 responses for iframe src</li>
+          <li>No CORS errors</li>
+          <li>No CSP violations in Console</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h1 id="performance">13. Performance Optimization</h1>
+    
+    <h2>13.1 Lazy Loading</h2>
+    
+    <pre><code>// Defer widget loading until user interaction
+const [loadWidget, setLoadWidget] = useState(false);
+
+useEffect(() => {
+  // Load widget after 3 seconds or on user scroll
+  const timer = setTimeout(() => setLoadWidget(true), 3000);
+  
+  const handleScroll = () => {
+    setLoadWidget(true);
+    window.removeEventListener('scroll', handleScroll);
+  };
+  
+  window.addEventListener('scroll', handleScroll);
+  
+  return () => {
+    clearTimeout(timer);
+    window.removeEventListener('scroll', handleScroll);
+  };
+}, []);
+
+return loadWidget ? &lt;ChatbotIframeEmbed {...props} /&gt; : null;</code></pre>
+
+    <h2>13.2 Connection Pooling</h2>
+    
+    <p>RAGcanvas widget automatically uses connection pooling for WebSocket connections. No host-side configuration required.</p>
+
+    <h2>13.3 Event Handler Optimization</h2>
+    
+    <pre><code>// Debounce rapid message events
+import { useMemo } from 'react';
+
+const handleMessage = useMemo(() => {
+  let timeout: NodeJS.Timeout;
+  
+  return (event: MessageEvent) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      processMessage(event);
+    }, 50); // 50ms debounce
+  };
+}, []);
+
+useEffect(() => {
+  window.addEventListener('message', handleMessage);
+  return () => window.removeEventListener('message', handleMessage);
+}, [handleMessage]);</code></pre>
+
+    <h2>13.4 Performance Metrics</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Target</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Initial Load Time</td>
+          <td>&lt; 1s</td>
+          <td>Time to first iframe render</td>
+        </tr>
+        <tr>
+          <td>Time to Interactive</td>
+          <td>&lt; 2s</td>
+          <td>Time until widget responds to clicks</td>
+        </tr>
+        <tr>
+          <td>PostMessage Latency</td>
+          <td>&lt; 50ms</td>
+          <td>Time between state change and UI update</td>
+        </tr>
+        <tr>
+          <td>Memory Footprint</td>
+          <td>&lt; 15MB</td>
+          <td>Total memory used by widget iframe</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 id="browser-compatibility">14. Browser Compatibility</h1>
+    
+    <h2>14.1 Supported Browsers</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Browser</th>
+          <th>Minimum Version</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Chrome</td>
+          <td>90+</td>
+          <td>Fully supported</td>
+        </tr>
+        <tr>
+          <td>Firefox</td>
+          <td>88+</td>
+          <td>Fully supported</td>
+        </tr>
+        <tr>
+          <td>Safari</td>
+          <td>14+</td>
+          <td>Fully supported</td>
+        </tr>
+        <tr>
+          <td>Edge</td>
+          <td>90+</td>
+          <td>Fully supported</td>
+        </tr>
+        <tr>
+          <td>iOS Safari</td>
+          <td>14+</td>
+          <td>Fully supported</td>
+        </tr>
+        <tr>
+          <td>Android Chrome</td>
+          <td>90+</td>
+          <td>Fully supported</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>14.2 Required Browser Features</h2>
+    
+    <ul>
+      <li>PostMessage API (window.postMessage)</li>
+      <li>ES6+ JavaScript support</li>
+      <li>CSS Flexbox</li>
+      <li>CSS Fixed Positioning</li>
+      <li>HTTPS/TLS 1.2+</li>
+      <li>WebSocket support (for real-time features)</li>
+    </ul>
+
+    <h2>14.3 Feature Detection</h2>
+    
+    <pre><code>// Check browser compatibility before loading widget
+function isBrowserSupported() {
+  return (
+    'postMessage' in window &&
+    'Promise' in window &&
+    'fetch' in window &&
+    CSS.supports('position', 'fixed')
+  );
+}
+
+if (isBrowserSupported()) {
+  // Load widget
+} else {
+  console.warn('Browser does not support required features for RAGcanvas widget');
+  // Show fallback contact form
+}</code></pre>
+
+    <h2>14.4 Polyfills</h2>
+    
+    <p>No polyfills required for supported browsers. For legacy browser support, consider:</p>
+    
+    <ul>
+      <li>PostMessage polyfill: Not recommended (security implications)</li>
+      <li>Fetch polyfill: <code>whatwg-fetch</code></li>
+      <li>Promise polyfill: <code>core-js</code></li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>Recommendation:</strong> Display a graceful degradation message for unsupported browsers rather than using polyfills.
+    </div>
+
+    <hr style="margin: 50px 0; border: none; border-top: 2px solid #e0e0e0;">
+
+    <h2>Document Metadata</h2>
+    
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Document Version</strong></td>
+          <td>1.0</td>
+        </tr>
+        <tr>
+          <td><strong>Last Updated</strong></td>
+          <td><script>document.write(new Date().toLocaleDateString())</script></td>
+        </tr>
+        <tr>
+          <td><strong>Author</strong></td>
+          <td>FormsEdge Development Team</td>
+        </tr>
+        <tr>
+          <td><strong>Widget Provider</strong></td>
+          <td>RAGcanvas (https://ragcanvas.com)</td>
+        </tr>
+        <tr>
+          <td><strong>Support Contact</strong></td>
+          <td>Via RAGcanvas dashboard</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box" style="margin-top: 30px;">
+      <p><strong>Note:</strong> This documentation is based on the production implementation of the RAGcanvas widget integration within the FormsEdge platform. All technical specifications reflect the actual deployed configuration.</p>
+    </div>
+  </div>
+
+  <script>
+    // Update all date scripts
+    document.addEventListener('DOMContentLoaded', function() {
+      const date = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      document.querySscriptt('script').forEach(script => {
+        if (script.textContent.includes('toLocaleDateString')) {
+          const parent = script.parentElement;
+          const textNode = document.createTextNode(date);
+          parent.replaceChild(textNode, script);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormsEdge Embed Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .notice {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FormsEdge Embed Test Page</h1>
+        <p>This page demonstrates how to embed FormsEdge forms on external websites.</p>
+        
+        <div class="notice success">
+            <strong>✓ Testing Instructions:</strong><br>
+            1. Go to your form's <strong>Embed SDK</strong> tab in FormsEdge<br>
+            2. Copy the <strong>complete</strong> embed code (both the &lt;div&gt; and &lt;script&gt; tags)<br>
+            3. Replace lines 66-74 below with your actual embed code<br>
+            4. Open this file in a browser to test<br>
+            5. Your form should load correctly with all fields visible
+        </div>
+
+        <div class="notice">
+            <strong>⚠️ Critical:</strong> Do NOT use old script URLs like 
+            <code>https://formsedge.com/formsedge-embed.js</code>. 
+            Always use the environment-specific URL from your Embed SDK tab 
+            (e.g., <code>https://abc123.lovableproject.com/formsedge-embed.js</code>). 
+            Using the wrong script URL will cause "File not found" or "null/f/..." errors.
+        </div>
+
+        <h2>Embedded Form:</h2>
+        
+        <!-- Replace this placeholder with your actual embed code -->
+        <div
+          data-fe-form="YOUR_FORM_ID_HERE"
+          data-fe-mode="inline"
+          data-fe-theme="light"
+          data-fe-progress="top"
+          data-fe-autoresize="true"
+          data-fe-mobile-fullscreen="true"
+        ></div>
+        <script src="/formsedge-embed.js" async></script>
+        <!-- End of embed code -->
+
+        <div class="notice" style="margin-top: 30px;">
+            <strong>How it works:</strong><br>
+            The embed SDK automatically detects its own script URL and uses that origin to load forms.
+            This means:<br>
+            • ✓ Works with local HTML files (file:// protocol)<br>
+            • ✓ Works on any external domain<br>
+            • ✓ No configuration needed—just copy and paste<br>
+            • ✓ Forms always load from the correct environment
+        </div>
+    </div>
+</body>
+</html>

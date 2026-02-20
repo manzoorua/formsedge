@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Switch Chatbot to App Mode</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>Switch Chatbot to App Mode</h1>
+  <button onclick="switchMode()">Switch to App Mode</button>
+  <div id="result"></div>
+
+  <script>
+    const { createClient } = supabase;
+    const supabaseClient = createClient(
+      'https://upzbauplibbnmmsvlsjf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwemJhdXBsaWJibm1tc3Zsc2pmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2Njk3MzksImV4cCI6MjA3MTI0NTczOX0.Dd2bMixDOv4beDu2z00qW7UU0exL__1AEGLGk7zw0Yc'
+    );
+
+    async function switchMode() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('chatbot_settings')
+          .update({ 
+            setting_value: {
+              widgetId: 'widget_7243353be9689ba901ea6816',
+              initialState: 'closed',
+              mode: 'app'
+            }
+          })
+          .eq('setting_key', 'chatbot_config')
+          .select();
+
+        if (error) throw error;
+
+        document.getElementById('result').innerHTML = 
+          '<p style="color: green;">Successfully switched to app mode! Data: ' + 
+          JSON.stringify(data, null, 2) + '</p>';
+      } catch (err) {
+        document.getElementById('result').innerHTML = 
+          '<p style="color: red;">Error: ' + err.message + '</p>';
+      }
+    }
+  </script>
+</body>
+</html>
