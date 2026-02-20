@@ -5,12 +5,15 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: git-checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -28,11 +31,11 @@ jobs:
       - name: Copy .htaccess to dist
         run: cp public/.htaccess dist/.htaccess
 
-      - name: Push
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: build
-          FOLDER: dist
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}"
+      - name: Deploy to build branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: build
+          force_orphan: true
+          commit_message: "Build: ${{ github.sha }}"
